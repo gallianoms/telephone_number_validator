@@ -1,58 +1,60 @@
 function telephoneCheck(str) {
-  const numbsPhone = str.match(/\d+/g)
+  const phoneNumber = str.match(/\d+/g)
 
-  console.log(numbsPhone)
-
-  if (numbsPhone.join('').length < 10 || numbsPhone.join('').length > 11)
+  if (phoneNumber.join('').length < 10 || phoneNumber.join('').length > 11)
     return false
 
-  if (numbsPhone.join('').length === 11 && str[0] !== '1') return false
+  if (phoneNumber.join('').length === 11 && str[0] !== '1') return false
 
-  if (numbsPhone.join('').length === 10) {
-    const regexPhoneMinusOne = /^(\d+\-\d+\-\d+|\(\d+\)\d+\-\d+|\d+)/g // NOT began 1
-
-    if (
-      str.match(regexPhoneMinusOne) !== null &&
-      str.match(regexPhoneMinusOne).join('') !== str
-    )
-      return false
-
-    return regexPhoneMinusOne.test(str)
+  if (phoneNumber.join('').length === 10) {
+    return funcPhone10(str)
   }
 
-  // // // //   // // // //    // // // //    // // // //    // // // //
-
-  if (numbsPhone.join('').length === 11) {
-    const regexPhonePlusOne =
-      /^1(\s|\()(\(|\d+)(-|\d+|\)|\s)(\d+|\))(-|\s)(\d+)-?\d+/g // began 1
-
-    if (
-      str.match(regexPhonePlusOne) !== null &&
-      str.match(regexPhonePlusOne).join('') !== str
-    )
-      return false
-
-    const anchors = str
-      .match(regexPhonePlusOne)
-      .join('')
-      .split('')
-      .reduce(
-        (acc, char) => {
-          if (char === '(') acc['(']++
-          if (char === ')') acc[')']++
-
-          return acc
-        },
-        { '(': 0, ')': 0 }
-      )
-
-    if (anchors['('] !== anchors[')']) return false
-
-    return regexPhonePlusOne.test(str)
+  if (phoneNumber.join('').length === 11) {
+    return funcPhone11(str)
   }
 }
 
-// Si el código de país es proporcionado, debes confirmar que el código de país es 1
+const funcPhone10 = str => {
+  const regexPhoneMinusOne = /^(\d+\-\d+\-\d+|\(\d+\)\d+\-\d+|\d+)/g // NOT began 1
+
+  if (
+    str.match(regexPhoneMinusOne) !== null &&
+    str.match(regexPhoneMinusOne).join('') !== str
+  )
+    return false
+
+  return regexPhoneMinusOne.test(str)
+}
+
+const funcPhone11 = str => {
+  const regexPhonePlusOne =
+    /^1(\s|\()(\(|\d+)(-|\d+|\)|\s)(\d+|\))(-|\s)(\d+)-?\d+/g // began 1
+
+  if (
+    str.match(regexPhonePlusOne) !== null &&
+    str.match(regexPhonePlusOne).join('') !== str
+  )
+    return false
+
+  const anchors = str
+    .match(regexPhonePlusOne)
+    .join('')
+    .split('')
+    .reduce(
+      (acc, char) => {
+        if (char === '(') acc['(']++
+        if (char === ')') acc[')']++
+
+        return acc
+      },
+      { '(': 0, ')': 0 }
+    )
+
+  if (anchors['('] !== anchors[')']) return false
+
+  return regexPhonePlusOne.test(str)
+}
 
 // OUTPUT: true
 telephoneCheck('5555555555') // debe devolver true.
